@@ -4,6 +4,12 @@ import env from "../config/env"
 const STATIC_USERNAME = env.STATIC_USERNAME
 const STATIC_PASSWORD = env.STATIC_PASSWORD
 
+/**
+ * @description Logs in a user by checking the provided username and password against static credentials.
+ * @param {Request} req - Express Request object containing the username and password in the body.
+ * @param {Response} res - Express Response object used to send the response to the client.
+ * @returns {void}
+ */
 export const loginUser = (req: Request, res: Response) => {
   const { username, password } = req.body
 

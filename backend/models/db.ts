@@ -1,38 +1,68 @@
-import mysql from "mysql2"
+import mysql from "mysql2/promise"
 import env from "../config/env"
 
-const pool = mysql.createPool({
-  host: env.DB_HOST,
-  user: env.DB_USER,
-  password: env.DB_PASS,
-  database: env.DB_NAME,
-  connectionLimit: 10,
-})
+const { DB_HOST, DB_USER, DB_PASS, DB_NAME } = env
 
-const db = pool.promise()
-
-// Create tables if they don't exist
+// Function to create the database if it doesn't exist
 async function initializeDatabase() {
-  try {
-    await db.query(`CREATE DATABASE IF NOT EXISTS ${env.DB_NAME}`)
-    await db.query(`USE ${env.DB_NAME}`)
+  // Create a temporary connection (without specifying a database)
+  const tempConnection = await mysql.createConnection({
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASS,
+  })
 
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS quizzes (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        description TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        user_id INT NOT NULL,
-      )
-    `)
-    console.log("Database initialized ✅")
-  } catch (err) {
-    console.error("Database initialization failed ❌", err)
-  }
+  // Ensure the database exists
+  await tempConnection.query(`CREATE DATABASE IF NOT EXISTS ${DB_NAME}`)
+  await tempConnection.end() // Close temp connection
 }
 
-// Initialize the database
-initializeDatabase()
+// Create database first, then create the pool
+function createPool() {
+  initializeDatabase() // Ensure DB exists before creating pool
+    .then((_) => {
+      console.log("✅ Database ensured")
+    })
+    .catch((err) => {
+      console.error("❌ Error ensuring database:", err)
+      process.exit(1)
+    })
+
+  const pool = mysql.createPool({
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASS,
+    database: DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  })
+
+  console.log("✅ MySQL Pool connected")
+  return pool
+}
+
+// Export the pool promise
+const db = createPool()
+
+
+db.query(
+  `
+    CREATE TABLE IF NOT EXISTS quizzes (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      description TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      user_id INT NOT NULL
+      )
+      `,
+)
+  .then(() => {
+    console.log("✅ Tables ensured")
+  })
+  .catch((err) => {
+    console.error("❌ Error creating tables:", err)
+    process.exit(1)
+  })
 
 export default db
