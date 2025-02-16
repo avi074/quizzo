@@ -2,14 +2,26 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components//ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { Quiz } from "@/types";
 
-interface Quiz {
-  id: number;
-  title: string;
-  description: string;
-  createdAt: string;
-}
-
+/**
+ * The Dashboard component is responsible for displaying a list of quizzes fetched from the server.
+ * It provides functionality to navigate to the quiz creation page and edit or delete existing quizzes.
+ *
+ * @component
+ * @example
+ * return (
+ *   <Dashboard />
+ * )
+ *
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @remarks
+ * This component uses the `useNavigate` hook from `react-router-dom` for navigation and `useState` and `useEffect` hooks from React for state management and side effects.
+ *
+ * @function
+ * @name Dashboard
+ */
 export default function Dashboard() {
   const navigate = useNavigate();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);

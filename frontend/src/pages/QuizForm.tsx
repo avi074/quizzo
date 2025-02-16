@@ -16,6 +16,21 @@ const quizSchema = z.object({
 
 type QuizFormInputs = z.infer<typeof quizSchema>
 
+/**
+ * QuizForm component allows users to create or edit a quiz.
+ * 
+ * This component uses React Hook Form for form handling and validation,
+ * and Zod for schema validation. It retrieves the quiz ID from the URL
+ * parameters and fetches the corresponding quiz data from the state if
+ * available. The form is pre-filled with the quiz data if editing, otherwise
+ * it starts with default values.
+ * 
+ * On form submission, it dispatches an action to either update an existing
+ * quiz or add a new quiz to the state, and then navigates the user to the
+ * dashboard.
+ * 
+ * @returns {JSX.Element} The rendered QuizForm component.
+ */
 export default function QuizForm() {
   const { id } = useParams()
   const navigate = useNavigate()

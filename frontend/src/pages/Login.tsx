@@ -17,7 +17,24 @@ const loginSchema = z.object({
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
-export default function Login() {
+/**
+ * The `Login` component renders a login form for the Quizzo application.
+ * It uses React Hook Form for form handling and validation, and Zod for schema validation.
+ * On successful login, it dispatches a user context action to set the user and navigates to the dashboard.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * import Login from './Login';
+ * 
+ * function App() {
+ *   return <Login />;
+ * }
+ * ```
+ * 
+ * @returns {JSX.Element} The rendered login form component.
+ */
+export default function Login(){
   const navigate = useNavigate();
   const {
     register,

@@ -1,6 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * NotFound component renders a 404 error page with a message indicating that the requested page was not found.
+ * It includes a button to navigate back to the home page.
+ *
+ * @component
+ * @example
+ * return (
+ *   <NotFound />
+ * )
+ *
+ * @returns {JSX.Element} A React component that displays a 404 error message and a button to navigate to the home page.
+ */
 export default function NotFound() {
   const navigate = useNavigate();
   return (
